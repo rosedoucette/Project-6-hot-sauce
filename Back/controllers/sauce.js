@@ -4,15 +4,13 @@
 //class sauce-list or sauce-list-item??
 //app.use() method lets you attribute a piece of middleware to a specific route in your app
 
+const Sauce = require('../models/sauce');
+
 //copied from p5 controllers/product.js
 exports.getAllProducts = (req, res, next) => {
-    Product.find().then(
-      (products) => {
-        const mappedProducts = products.map((product) => {
-          product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
-          return product;
-        });
-        res.status(200).json(mappedProducts); //always needs to send something back. it's the response to the fetch
+    Sauce.find().then(
+      (sauces) => {
+        res.status(200).json(sauces); //always needs to send something back. it's the response to the fetch
       }
     ).catch(
       () => {
@@ -22,13 +20,12 @@ exports.getAllProducts = (req, res, next) => {
   };
   
   exports.getOneProduct = (req, res, next) => {
-    Product.findById(req.params.id).then(
-      (product) => {
-        if (!product) {
+    Sauce.findById(req.params.id).then( //params.id is referencing the :id from the route in app.js
+      (sauce) => {
+        if (!sauce) {
           return res.status(404).send(new Error('Product not found!'));
         }
-        product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
-        res.status(200).json(product);
+        res.status(200).json({message: 'sauce image!'}); //expected response for POST api/sauces
       }
     ).catch(
       () => {

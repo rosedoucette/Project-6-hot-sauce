@@ -1,5 +1,5 @@
 const http = require('http');
-const app = require('./app');
+const app = require('./app'); // the ./ refers to a local file source
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
