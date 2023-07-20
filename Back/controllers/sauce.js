@@ -33,3 +33,19 @@ exports.getAllProducts = (req, res, next) => {
       }
     )
   };
+
+  exports.deleteOne = (req, res, next) => { //why exports. does it need to be something different? 
+    Sauce.findById({_id: req.params.id}).then( //sends error in terminal for curly's, but says ', expected' when they're taken out
+        () => {
+            res.status(200).json ({
+                message: 'Deleted!'
+            });
+        }
+    ).catch(
+        (error) => {
+            res.status(400).json({
+                error:error 
+            });
+        }
+    );
+  };

@@ -39,6 +39,7 @@ app.post('/api/auth/signup',signUp) //routes should come at the end of the file
 app.post('/api/auth/login',login)
 app.get('/api/sauces', getAllProducts); //copied from p5 routes
 app.get('/api/sauces/:id', getOneProduct); //same as above
+app.delete('/api/sauces/:id', deleteOne); //WHY WON'T THIS ONE LINK 
 
 module.exports = app;
 
