@@ -1,6 +1,21 @@
+//MongoDB PW: zjwkL8B7W9hUAsHW
+//MongoDB Connection: mongodb+srv://rosedoucette94:<password>@cluster0.pdxl48s.mongodb.net/
+
 const express = require('express'); //ref npm express
 const path = require('path'); //require is a way of calling the thing. so path is part of node.
 const {signUp,login} = require('./controllers/user') //calling the functions inside the {} from the user.js file. deconstructed/destructed lol
+const () = require('./controllers/sauce') //*fill in functions from sauce.js */
+//comment back in once mongoose is installed: const mongoose = require('mongoose');
+
+//for when we have mongoose installed, delete this line and comment back in the following section
+// mongoose.connect('mongodb+srv://rosedoucette94:<password>@cluster0.pdxl48s.mongodb.net/')
+// .then (() => {
+//     console.log('Successfully connected to MongoDB Atlas!');
+// })
+// .catch((error) => {
+//     console.log('Unable to connect to MongoDB Atlas!');
+//     console.error(error);
+// });
 
 //const productRoutes = require('./routes/product');
 
@@ -23,6 +38,8 @@ app.use(express.json()); //important!! Will convert a fetch request from a body 
 
 app.post('/api/auth/signup',signUp) //routes should come at the end of the file
 app.post('/api/auth/login',login)
+app.get('/api/sauces', productCtrl.getAllProducts); //copied from p5 routes
+app.get('/api/sauces/:id', productCtrl.getOneProduct); //same as above
 
 module.exports = app;
 
