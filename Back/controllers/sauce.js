@@ -9,7 +9,6 @@ const fs = require('fs')
 
 //from the courses, just changed Thing to Sauce:
 exports.createSauce = (req, res, next) => {
-    let sauce = new Sauce({ _id: req.params._id });
     req.body.sauce = JSON.parse(req.body.sauce);
     const url = req.protocol + '://' + req.get('host');
     const sauce = new Sauce({
