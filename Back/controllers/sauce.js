@@ -56,21 +56,22 @@ exports.modifySauce = (req, res, next) => {
             userId: req.body.userId
         };
     }
-};
 
-Sauce.updateOne({ _id: req.params.id }, sauce).then(
-    () => {
-        res.status(201).json({
-            message: 'Sauce updated successfully!'
-        });
-    }
-).catch(
-    (error) => {
-        res.status(400).json({
-            error: error
-        });
-    }
-);
+
+    Sauce.updateOne({ _id: req.params.id }, sauce).then(
+        () => {
+            res.status(201).json({
+                message: 'Sauce updated successfully!'
+            });
+        }
+    ).catch(
+        (error) => {
+            res.status(400).json({
+                error: error
+            });
+        }
+    );
+};
 
 
 //copied from p5 controllers/product.js
@@ -101,12 +102,12 @@ exports.getOneProduct = (req, res, next) => {
     )
 };
 
-exports.deleteOne = (req, res, next) => { //why exports. does it need to be something different? 
+exports.deleteOne = (req, res, next) => { //why exports. does it need to be something different? -> app. is the express application. like the server settings. exports. is 
     Sauce.findById({ _id: req.params.id }).then( //changed 'Thing' from the videos to Sauce
         (sauce) => {
             const filename = sauce.imageUrl.split('/images/')[1];
             fs.unlink('images/' + filename, () => {
-                Sauce.deleteOne({_id: req.params.id}).then(
+                Sauce.deleteOne({ _id: req.params.id }).then(
                     () => {
                         res.status(200).json({
                             message: 'Deleted!'

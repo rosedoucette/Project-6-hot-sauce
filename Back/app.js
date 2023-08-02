@@ -4,11 +4,10 @@
 const express = require('express'); //ref npm express
 const path = require('path'); //require is a way of calling the thing. so path is part of node.
 const {signUp,login} = require('./controllers/user') //calling the functions inside the {} from the user.js file. deconstructed/destructed lol
-const {getAllProducts, getOneProduct} = require('./controllers/sauce') //functions from sauce.js
+const {getAllProducts, getOneProduct, deleteOne, modifySauce, createSauce, updateOne} = require('./controllers/sauce') //functions from sauce.js
 const mongoose = require('mongoose');
 const auth = require('./middleware/auth');
 const multer = require('./middleware/multer-config');
-const path = require('path');
 
 mongoose.connect('mongodb+srv://rosedoucette94:zjwkL8B7W9hUAsHW@cluster0.pdxl48s.mongodb.net/')
 .then (() => {
@@ -19,7 +18,6 @@ mongoose.connect('mongodb+srv://rosedoucette94:zjwkL8B7W9hUAsHW@cluster0.pdxl48s
     console.error(error);
 });
 
-//const productRoutes = require('./routes/product');
 
 const app = express(); //again, express
 
@@ -44,9 +42,9 @@ app.post('/api/auth/signup', auth, signUp) //routes should come at the end of th
 app.post('/api/auth/login', auth, multer, login) //multer needs to come after auth, otherwise any unauthorized user could upload images 
 app.get('/api/sauces', auth, getAllProducts); //copied from p5 routes
 app.get('/api/sauces/:id', auth, getOneProduct); //same as above
-app.post('/api/sauces', auth)//*
-app.put('api/sauces/:id', auth, multer)//*
-app.delete('/api/sauces/:id', auth, deleteOne); //WHY WON'T THIS ONE LINK 
+app.post('/api/sauces', auth, multer, createSauce)//*
+app.put('api/sauces/:id', auth, multer, modifySauce, updateOne)//putting is for editing
+app.delete('/api/sauces/:id', auth, deleteOne); 
 app.post('/api/sauces/"id/like', auth)//*
 
 module.exports = app;
