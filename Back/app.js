@@ -6,6 +6,9 @@ const path = require('path'); //require is a way of calling the thing. so path i
 const {signUp,login} = require('./controllers/user') //calling the functions inside the {} from the user.js file. deconstructed/destructed lol
 const {getAllProducts, getOneProduct} = require('./controllers/sauce') //functions from sauce.js
 const mongoose = require('mongoose');
+const auth = require('./middleware/auth');
+const multer = require('./middleware/multer-config');
+const path = require('path');
 
 mongoose.connect('mongodb+srv://rosedoucette94:zjwkL8B7W9hUAsHW@cluster0.pdxl48s.mongodb.net/')
 .then (() => {
@@ -30,16 +33,21 @@ app.use((req, res, next) => { //app.use is middleware
 app.use('/images', express.static(path.join(__dirname, 'images'))); //serve up anything in the image folder bc of the express.static. if something's in the folder, it will be returned. 
 app.use(express.static('images'));
 
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 app.use(express.urlencoded({extended: true}));
 app.use(express.json()); //important!! Will convert a fetch request from a body into json. Needs to be defined before routes (ex line 21)
 
 //app.use('/api/products', productRoutes); //product routes are being brought in via the api/product file
 
-app.post('/api/auth/signup',signUp) //routes should come at the end of the file
-app.post('/api/auth/login',login)
-app.get('/api/sauces', getAllProducts); //copied from p5 routes
-app.get('/api/sauces/:id', getOneProduct); //same as above
-app.delete('/api/sauces/:id', deleteOne); //WHY WON'T THIS ONE LINK 
+app.post('/api/auth/signup', auth, signUp) //routes should come at the end of the file
+app.post('/api/auth/login', auth, multer, login) //multer needs to come after auth, otherwise any unauthorized user could upload images 
+app.get('/api/sauces', auth, getAllProducts); //copied from p5 routes
+app.get('/api/sauces/:id', auth, getOneProduct); //same as above
+app.post('/api/sauces', auth)//*
+app.put('api/sauces/:id', auth, multer)//*
+app.delete('/api/sauces/:id', auth, deleteOne); //WHY WON'T THIS ONE LINK 
+app.post('/api/sauces/"id/like', auth)//*
 
 module.exports = app;
 
