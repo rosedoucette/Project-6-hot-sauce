@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); //imports user model 
 const { error } = require('console');
-const user = require('../models/user');
+const user = require('../models/user'); //....why do I have this here twice?
 
 const signUp = (req, res) => { //video showed exports instead of const. what's the difference? 
     bcrypt.hash(req.body.password, 10).then( //10 being the number of times the password gets salted, 10 being considered a good amount 'secure'
@@ -18,31 +18,37 @@ const signUp = (req, res) => { //video showed exports instead of const. what's t
             ).catch(
                 (error) => {
                     res.status(500).json({
-                        error: error
+                        message: error
                     });
                 }
             );
+        }
+    ).catch(
+        (error) => {
+            res.status(500).json({
+                message: error
+            });
         }
     );
 };
 
 const login = (req, res) => {
-    User.findOne ({email: req.body.email}).then( //checking if user exists via email
+    User.findOne({ email: req.body.email }).then( //checking if user exists via email
         (user) => {
             if (!user) {
                 return res.status(401).json({
-                    error: new Error('User not found!') //if not found, returns an error
+                    message: 'User not found!' //if not found, returns an error
                 });
             }
             bcrypt.compare(req.body.password, user.password).then( //if they do exist, we compare the password with the hashed one in the database
                 (valid) => {
                     if (!valid) {
-                        return res.statur(401).json({
-                            error: new Error('Incorrect password!') //if not valid, send back an error
+                        return res.status(401).json({
+                            message: 'Incorrect password!' //if not valid, send back an error
                         });
                     }
                     const token = jwt.sign(
-                        {userId: user._id}, 
+                        { userId: user._id },
                         'RANDOM_TOKEN_SECRET',
                         { expiresIn: '24h' });
                     res.status(200).json({
@@ -53,15 +59,15 @@ const login = (req, res) => {
             ).catch( //catch block catches any errors 
                 (error) => {
                     res.status(500).json({
-                        error: error
+                        message: error
                     });
                 }
             )
         }
     )
-    };
+};
 
-    //res.status(200).json({ userId: 'urmom', token: '12345' }) this is the part that we did initially
+//res.status(200).json({ userId: 'urmom', token: '12345' }) this is the part that we did initially
 
 
 module.exports = { signUp, login } //to be able to reference the signUp or login function in a different file

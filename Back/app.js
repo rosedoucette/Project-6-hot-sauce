@@ -38,12 +38,12 @@ app.use(express.json()); //important!! Will convert a fetch request from a body 
 
 //app.use('/api/products', productRoutes); //product routes are being brought in via the api/product file
 
-app.post('/api/auth/signup', auth, signUp) //routes should come at the end of the file
-app.post('/api/auth/login', auth, multer, login) //multer needs to come after auth, otherwise any unauthorized user could upload images 
+app.post('/api/auth/signup', signUp) //routes should come at the end of the file
+app.post('/api/auth/login', login) //multer needs to come after auth, otherwise any unauthorized user could upload images 
 app.get('/api/sauces', auth, getAllProducts); //copied from p5 routes
 app.get('/api/sauces/:id', auth, getOneProduct); //same as above
 app.post('/api/sauces', auth, multer, createSauce)//*
-app.put('api/sauces/:id', auth, multer, modifySauce, updateOne)//putting is for editing
+app.put('api/sauces/:id', auth, multer, modifySauce)//putting is for editing
 app.delete('/api/sauces/:id', auth, deleteOne); 
 app.post('/api/sauces/"id/like', auth)//*
 

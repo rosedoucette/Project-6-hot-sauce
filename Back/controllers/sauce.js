@@ -11,14 +11,20 @@ const fs = require('fs')
 exports.createSauce = (req, res, next) => {
     req.body.sauce = JSON.parse(req.body.sauce);
     const url = req.protocol + '://' + req.get('host');
-    const sauce = new Sauce({
-        title: req.body.sauce.title,
+    new Sauce({
+        name: req.body.sauce.name,
         description: req.body.sauce.description,
         imageUrl: url + '/images/' + req.file.filename,
         price: req.body.sauce.price,
-        userId: req.body.sauce.userId
-    });
-    sauce.save().then(
+        userId: req.body.sauce.userId,
+        manufacturer: req.body.sauce.manufacturer,
+        mainPepper: req.body.sauce.mainPepper,
+        heat: req.body.sauce.heat,
+        likes: 0,
+        dislikes: 0,
+        usersLiked: [],
+        usersDisliked: [], //[] is an empty array lol 
+    }).then(
         () => {
             res.status(201).json({
                 message: 'Post saved successfully!'
@@ -34,26 +40,15 @@ exports.createSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
-    let sauce = new Sauce({ _id: req.params._id });
+    let sauce
     if (req.file) {
         const url = req.protocol + '://' + req.get('host');
-        req.body.sauce = JSON.parse(req.body.sauce);
         sauce = {
-            _id: req.params.id,
-            title: req.body.sauce.title,
-            description: req.body.sauce.description,
             imageUrl: url + '/images/' + req.file.filename,
-            price: req.body.sauce.price,
-            userId: req.body.sauce.userId
         };
     } else {
         sauce = {
-            _id: req.params.id,
-            title: req.body.title,
-            description: req.body.description,
-            imageUrl: req.body.imageUrl,
-            price: req.body.price,
-            userId: req.body.userId
+            ...req.body.sauce, //... is called spreading. makes a copy of that object (sauce in this case)
         };
     }
 
@@ -72,6 +67,7 @@ exports.modifySauce = (req, res, next) => {
         }
     );
 };
+
 
 
 //copied from p5 controllers/product.js
