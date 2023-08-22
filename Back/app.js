@@ -4,7 +4,7 @@
 const express = require('express'); //ref npm express
 const path = require('path'); //require is a way of calling the thing. so path is part of node.
 const {signUp,login} = require('./controllers/user') //calling the functions inside the {} from the user.js file. deconstructed/destructed lol
-const {getAllProducts, getOneProduct, deleteOne, modifySauce, createSauce, updateOne} = require('./controllers/sauce') //functions from sauce.js
+const {getAllProducts, getOneProduct, deleteOne, modifySauce, createSauce} = require('./controllers/sauce') //functions from sauce.js
 const mongoose = require('mongoose');
 const auth = require('./middleware/auth');
 const multer = require('./middleware/multer-config');
@@ -29,9 +29,6 @@ app.use((req, res, next) => { //app.use is middleware
 });
 
 app.use('/images', express.static(path.join(__dirname, 'images'))); //serve up anything in the image folder bc of the express.static. if something's in the folder, it will be returned. 
-app.use(express.static('images'));
-
-app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json()); //important!! Will convert a fetch request from a body into json. Needs to be defined before routes (ex line 21)

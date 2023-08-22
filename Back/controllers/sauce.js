@@ -11,10 +11,10 @@ const fs = require('fs')
 exports.createSauce = (req, res, next) => {
     req.body.sauce = JSON.parse(req.body.sauce);
     const url = req.protocol + '://' + req.get('host');
-    new Sauce({
+    const sauce = new Sauce({ //new Sauce () returns a Sauce instance
         name: req.body.sauce.name,
         description: req.body.sauce.description,
-        imageUrl: url + '/images/' + req.file.filename,
+        imageUrl: url + '/images/' + req.file.fileName,
         price: req.body.sauce.price,
         userId: req.body.sauce.userId,
         manufacturer: req.body.sauce.manufacturer,
@@ -24,19 +24,20 @@ exports.createSauce = (req, res, next) => {
         dislikes: 0,
         usersLiked: [],
         usersDisliked: [], //[] is an empty array lol 
-    }).then(
-        () => {
-            res.status(201).json({
-                message: 'Post saved successfully!'
-            });
-        }
-    ).catch(
-        (error) => {
-            res.status(400).json({
-                error: error
-            });
-        }
-    );
+    }).save()
+        .then(
+            () => {
+                res.status(201).json({
+                    message: 'Post saved successfully!'
+                });
+            }
+        ).catch(
+            (error) => {
+                res.status(400).json({
+                    message: error
+                });
+            }
+        );
 };
 
 exports.modifySauce = (req, res, next) => {
@@ -62,7 +63,7 @@ exports.modifySauce = (req, res, next) => {
     ).catch(
         (error) => {
             res.status(400).json({
-                error: error
+                message: error
             });
         }
     );
