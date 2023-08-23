@@ -3,8 +3,8 @@
 
 const express = require('express'); //ref npm express
 const path = require('path'); //require is a way of calling the thing. so path is part of node.
-const {signUp,login} = require('./controllers/user') //calling the functions inside the {} from the user.js file. deconstructed/destructed lol
-const {getAllProducts, getOneProduct, deleteOne, modifySauce, createSauce} = require('./controllers/sauce') //functions from sauce.js
+const {signUp, login} = require('./controllers/user') //calling the functions inside the {} from the user.js file. deconstructed/destructed lol
+const {getAllProducts, getOneProduct, deleteOne, modifySauce, createSauce, like} = require('./controllers/sauce') //functions from sauce.js
 const mongoose = require('mongoose');
 const auth = require('./middleware/auth');
 const multer = require('./middleware/multer-config');
@@ -42,7 +42,7 @@ app.get('/api/sauces/:id', auth, getOneProduct); //same as above
 app.post('/api/sauces', auth, multer, createSauce)//*
 app.put('api/sauces/:id', auth, multer, modifySauce)//putting is for editing
 app.delete('/api/sauces/:id', auth, deleteOne); 
-app.post('/api/sauces/"id/like', auth)//*
+app.post('/api/sauces/:id/like', auth, like)//*
 
 module.exports = app;
 

@@ -3,7 +3,8 @@ const multer = require('multer');
 const MIME_TYPES = { //allows us to take a myme type and register as a file extension "jpg, png"
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',
-  'image/png': 'png'
+  'image/png': 'png',
+  'image/webp':'webp',
 };
 
 const storage = multer.diskStorage({

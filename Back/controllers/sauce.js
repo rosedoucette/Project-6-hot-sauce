@@ -9,22 +9,28 @@ const fs = require('fs')
 
 //from the courses, just changed Thing to Sauce:
 exports.createSauce = (req, res, next) => {
-    req.body.sauce = JSON.parse(req.body.sauce);
     const url = req.protocol + '://' + req.get('host');
+    console.log(req.file)
+    console.log(req.body)
+    const {name, description, price, userId, manufacturer, mainPepper, heat} = typeof req.body.sauce === 'string' ? JSON.parse(req.body.sauce): req.body.sauce; //deconstructing sauce. typeof is checking the type of string
     const sauce = new Sauce({ //new Sauce () returns a Sauce instance
-        name: req.body.sauce.name,
-        description: req.body.sauce.description,
-        imageUrl: url + '/images/' + req.file.fileName,
-        price: req.body.sauce.price,
-        userId: req.body.sauce.userId,
-        manufacturer: req.body.sauce.manufacturer,
-        mainPepper: req.body.sauce.mainPepper,
-        heat: req.body.sauce.heat,
+        name, description, price, userId, manufacturer, mainPepper, heat,
+        imageUrl: url + '/images/' + req.file.filename,
+        //line 17 is shorthand for the below properties:
+        //name: req.body.sauce.name,
+        //description: req.body.sauce.description
+        // price: req.body.sauce.price,
+        // userId: req.body.sauce.userId,
+        // manufacturer: req.body.sauce.manufacturer,
+        // mainPepper: req.body.sauce.mainPepper,
+        // heat: req.body.sauce.heat,
         likes: 0,
         dislikes: 0,
         usersLiked: [],
         usersDisliked: [], //[] is an empty array lol 
-    }).save()
+    });
+    console.log(sauce)
+    sauce.save()
         .then(
             () => {
                 res.status(201).json({
@@ -42,6 +48,8 @@ exports.createSauce = (req, res, next) => {
 
 exports.modifySauce = (req, res, next) => {
     let sauce
+    console.log(req.file)
+    console.log(sauce)
     if (req.file) {
         const url = req.protocol + '://' + req.get('host');
         sauce = {
@@ -52,7 +60,6 @@ exports.modifySauce = (req, res, next) => {
             ...req.body.sauce, //... is called spreading. makes a copy of that object (sauce in this case)
         };
     }
-
 
     Sauce.updateOne({ _id: req.params.id }, sauce).then(
         () => {
@@ -69,7 +76,27 @@ exports.modifySauce = (req, res, next) => {
     );
 };
 
+exports.like = (req, res, next) => {
+    //userId: String //everything inside of this a function is the controller
+    //like: Number
+    const { userId, like } = req.body; //deconstructing the body. pulling properties off of it from inside the {}. implies req.body.like bc of the switch expression (like)
 
+    switch (like) {
+        case 1:
+            console.log('Sauce liked');
+            break;
+        case 0:
+        default: //default moves up here from the bottom because this is the most neutral option
+            console.log('Sauce unliked');
+            break;
+        case -1:
+            console.log('Sauce disliked');
+            break;
+    }
+}
+
+//*semi-colons: logic(defining blocks of code) such as if, else, switch, try, catch, do not need one
+//anytime executing a command or stating something equals something, then you would put a semi-colon*
 
 //copied from p5 controllers/product.js
 exports.getAllProducts = (req, res, next) => {
@@ -90,7 +117,8 @@ exports.getOneProduct = (req, res, next) => {
             if (!sauce) {
                 return res.status(404).send(new Error('Product not found!'));
             }
-            res.status(200).json({ message: 'sauce image!' }); //expected response for POST api/sauces
+            console.log(sauce)
+            res.status(200).json(sauce); //expected response for POST api/sauces
         }
     ).catch(
         () => {
