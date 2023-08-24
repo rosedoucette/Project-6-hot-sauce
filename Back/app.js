@@ -18,11 +18,10 @@ mongoose.connect('mongodb+srv://rosedoucette94:zjwkL8B7W9hUAsHW@cluster0.pdxl48s
     console.error(error);
 });
 
-
 const app = express(); //again, express
 
 app.use((req, res, next) => { //app.use is middleware
-  res.setHeader('Access-Control-Allow-Origin', '*'); //basically, who can make requests. * means anybody can, typically is would be a 'secure' host ie. the host website core url. 
+  res.setHeader('Access-Control-Allow-Origin', '*'); //basically, who can make requests. '*' means anybody can, typically is would be a 'secure' host ie. the host website core url. 
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
@@ -47,4 +46,3 @@ app.post('/api/sauces/:id/like', auth, like)//*
 module.exports = app;
 
 //reference route file from p5 for route.get
-//commented out lines 4 and 21

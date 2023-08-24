@@ -48,8 +48,6 @@ exports.createSauce = (req, res, next) => {
 
 exports.modifySauce = (req, res, next) => {
     let sauce
-    console.log(req.file)
-    console.log(sauce)
     if (req.file) {
         const url = req.protocol + '://' + req.get('host');
         sauce = {
@@ -130,6 +128,7 @@ exports.getOneProduct = (req, res, next) => {
 exports.deleteOne = (req, res, next) => { //why exports. does it need to be something different? -> app. is the express application. like the server settings. exports. is 
     Sauce.findById({ _id: req.params.id }).then( //changed 'Thing' from the videos to Sauce
         (sauce) => {
+            console.log(sauce)
             const filename = sauce.imageUrl.split('/images/')[1];
             fs.unlink('images/' + filename, () => {
                 Sauce.deleteOne({ _id: req.params.id }).then(
@@ -146,31 +145,6 @@ exports.deleteOne = (req, res, next) => { //why exports. does it need to be some
                     }
                 );
             });
-
-            //do i need this stuff below?: 
-            if (!sauce) {
-                return res.status(404).json({
-                    error: new Error('No such Sauce!')
-                });
-            }
-            if (sauce.userId !== req.auth.userId) {
-                return res.status(400).json({
-                    error: new Error('Unauthorized request!')
-                })
-            }
-            Sauce.deleteOne({ _id: req.params.id }).then(
-                () => {
-                    return res.status(200).json({
-                        message: 'Deleted!'
-                    });
-                }
-            ).catch(
-                (error) => {
-                    return res.status(400).json({
-                        error: error
-                    });
-                }
-            );
         }
     )
 };
