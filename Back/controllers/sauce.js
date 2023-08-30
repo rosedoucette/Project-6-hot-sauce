@@ -12,7 +12,7 @@ exports.createSauce = (req, res, next) => {
     const url = req.protocol + '://' + req.get('host');
     console.log(req.file)
     console.log(req.body)
-    const {name, description, price, userId, manufacturer, mainPepper, heat} = typeof req.body.sauce === 'string' ? JSON.parse(req.body.sauce): req.body.sauce; //deconstructing sauce. typeof is checking the type of string
+    const { name, description, price, userId, manufacturer, mainPepper, heat } = typeof req.body.sauce === 'string' ? JSON.parse(req.body.sauce) : req.body.sauce; //deconstructing sauce. typeof is checking the type of string
     const sauce = new Sauce({ //new Sauce () returns a Sauce instance
         name, description, price, userId, manufacturer, mainPepper, heat,
         imageUrl: url + '/images/' + req.file.filename,
@@ -47,50 +47,80 @@ exports.createSauce = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
-    let sauce
+    let sauce;
     if (req.file) {
+        console.log(req.file)
         const url = req.protocol + '://' + req.get('host');
         sauce = {
             imageUrl: url + '/images/' + req.file.filename,
         };
     } else {
+        console.log("sauce", req.body)
         sauce = {
-            ...req.body.sauce, //... is called spreading. makes a copy of that object (sauce in this case)
+            ...req.body, //... is called spreading. makes a copy of that object (sauce in this case)
         };
     }
 
-    Sauce.updateOne({ _id: req.params.id }, sauce).then(
-        () => {
-            res.status(201).json({
-                message: 'Sauce updated successfully!'
-            });
-        }
-    ).catch(
-        (error) => {
-            res.status(400).json({
-                message: error
-            });
-        }
-    );
+    Sauce.updateOne({ _id: req.params.id }, sauce)
+        .then(
+            () => {
+                res.status(201).json({
+                    message: 'Sauce updated successfully!'
+                });
+            }
+        ).catch(
+            (error) => {
+                res.status(400).json({
+                    message: error
+                });
+            }
+        );
 };
 
 exports.like = (req, res, next) => {
+    const { userId, like } = req.body; //deconstructing the body. pulling properties off of it from inside the {}. implies req.body.like bc of the switch expression (like)
+    Sauce.findById(req.params.id).then(
+        (sauce) => {
+            const newSauce = { ...sauce._doc } //newSauce to update the sauce
+            switch (like) { //switch case is doing the case specific business logic
+                case 1:
+                    console.log('Sauce liked', newSauce);
+                    newSauce.usersLiked.push(userId);
+                    newSauce.usersDisliked = newSauce.usersDisliked.filter(user => user !== userId); //left side of array is existing. right side of array is the midification. Array is the =
+                    break;
+                case 0:
+                default: //default moves up here from the bottom because this is the most neutral option
+                    console.log('Sauce unliked');
+                    newSauce.usersDisliked = newSauce.usersDisliked.filter(user => user !== userId);
+                    newSauce.usersLiked = newSauce.usersLiked.filter(user => user !== userId);
+                    break;
+                case -1:
+                    console.log('Sauce disliked');
+                    newSauce.usersDisliked.push(userId);
+                    newSauce.usersLiked = newSauce.usersLiked.filter(user => user !== userId); //left side of array is existing. right side of array is the midification. Array is the =
+                    break;
+            }
+            console.log('like')
+            newSauce.likes = newSauce.usersLiked.length; //business logic that happens every single time
+            newSauce.dislikes = newSauce.usersDisliked.length;
+            Sauce.updateOne({_id:req.params.id},newSauce).then( 
+                () => {
+                    res.status(201).json({ message: 'Liked' }); //message is a value
+                }
+            ).catch(
+                () => {
+                    res.status(500).send(new Error('Error!'));
+                }
+            );
+        }
+    ).catch(
+        () => {
+            res.status(404).json({message: 'Not Found'});
+        }
+    )
     //userId: String //everything inside of this a function is the controller
     //like: Number
-    const { userId, like } = req.body; //deconstructing the body. pulling properties off of it from inside the {}. implies req.body.like bc of the switch expression (like)
 
-    switch (like) {
-        case 1:
-            console.log('Sauce liked');
-            break;
-        case 0:
-        default: //default moves up here from the bottom because this is the most neutral option
-            console.log('Sauce unliked');
-            break;
-        case -1:
-            console.log('Sauce disliked');
-            break;
-    }
 }
 
 //*semi-colons: logic(defining blocks of code) such as if, else, switch, try, catch, do not need one
@@ -126,9 +156,8 @@ exports.getOneProduct = (req, res, next) => {
 };
 
 exports.deleteOne = (req, res, next) => { //why exports. does it need to be something different? -> app. is the express application. like the server settings. exports. is 
-    Sauce.findById({ _id: req.params.id }).then( //changed 'Thing' from the videos to Sauce
+    Sauce.findById({ _id: req.params.id }).then(
         (sauce) => {
-            console.log(sauce)
             const filename = sauce.imageUrl.split('/images/')[1];
             fs.unlink('images/' + filename, () => {
                 Sauce.deleteOne({ _id: req.params.id }).then(

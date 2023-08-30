@@ -39,7 +39,7 @@ app.post('/api/auth/login', login) //multer needs to come after auth, otherwise 
 app.get('/api/sauces', auth, getAllProducts); //copied from p5 routes
 app.get('/api/sauces/:id', auth, getOneProduct); //same as above
 app.post('/api/sauces', auth, multer, createSauce)//*
-app.put('api/sauces/:id', auth, multer, modifySauce)//putting is for editing
+app.put('/api/sauces/:id', auth, multer, modifySauce)//putting is for editing
 app.delete('/api/sauces/:id', auth, deleteOne); 
 app.post('/api/sauces/:id/like', auth, like)//*
 
